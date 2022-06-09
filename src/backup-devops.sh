@@ -116,6 +116,11 @@ REPO_COUNTER=0
     else
         #Use Base64 PAT in headerto authentify on Git Repository
         git -c http.extraHeader="Authorization: Basic ${B64_PAT}" clone $(_jqR '.webUrl') ${CURRENT_REPO_DIRECTORY}
+        cd ${CURRENT_REPO_DIRECTORY}
+        git branch -a | grep -v HEAD | perl -ne 'chomp($_); s|^\*?\s*||; if (m|(.+)/(.+)| && not $d{$2}) {print qq(git branch --track $2 $1/$2\n)} else {$d{$_}=1}' | csh -xfs
+        git fetch --all
+        git pull --all
+        cd ..
     fi
          ((REPO_COUNTER++))
     done
